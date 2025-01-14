@@ -1,0 +1,49 @@
+# Assignment: Create A Multi-Service Multi-Node Web App
+
+## Goal: create networks, volumes, and services for a web-based "cats vs. dogs" voting app
+networks:
+  frontend:
+  backend:
+volumes:
+  db-data:
+services:
+  vote:
+    image: bretfisher/examplevotingapp_vote
+    networks:
+      - frontend
+    ports:
+      - 80:80
+    deploy:
+      replicas: 2
+  redis:
+    image: redis:3.2
+    networks:
+      - frontend
+    deploy:
+      replicas: 1
+  worker:
+    image: bretfisher/examplevotingapp_worker
+    networks:
+      - backend
+      - frontend
+    deploy:
+      replicas: 1
+  db:
+    image: postgres:9.4
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+  result:
+    image: bretfisher/examplevotingapp_result
+    ports:
+      - 5001:80
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
