@@ -19,6 +19,8 @@ services:
     image: redis:3.2
     networks:
       - frontend
+    depends_on:
+      - vote
     deploy:
       replicas: 1
   worker:
@@ -26,6 +28,8 @@ services:
     networks:
       - backend
       - frontend
+    depends_on:
+      - redis
     deploy:
       replicas: 1
   db:
@@ -34,6 +38,8 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - backend
+    depends_on:
+      - worker
     deploy:
       replicas: 1
     environment:
@@ -44,6 +50,8 @@ services:
       - 5001:80
     networks:
       - backend
+    depends_on:
+      - db
     deploy:
       replicas: 1
 
